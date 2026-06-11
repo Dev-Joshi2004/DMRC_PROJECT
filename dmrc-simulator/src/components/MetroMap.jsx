@@ -42,53 +42,88 @@ function MetroMap({
       {crossovers.map(
         (crossover, index) => {
 
-          const fromStation =
-            stations.find(
-              (s) =>
-                s.id ===
-                crossover.fromStation
-            );
+          const trackIndex =
+            crossover.trackNumber - 1;
 
-          const toStation =
-            stations.find(
-              (s) =>
-                s.id ===
-                crossover.toStation
-            );
+          const station1 =
+            stations[trackIndex];
+
+          const station2 =
+            stations[trackIndex + 1];
 
           if (
-            !fromStation ||
-            !toStation
+            !station1 ||
+            !station2
           )
             return null;
 
-          return (
-            <g key={index}>
+          const midX =
+            (station1.x +
+              station2.x) / 2;
 
-              {/* UP TO DOWN */}
+          if (
+            crossover.direction ===
+            "UP_TO_DOWN"
+          ) {
 
+            return (
               <line
-                x1={fromStation.x}
+                x1={midX - 30}
                 y1={100}
-                x2={toStation.x}
+                x2={midX + 30}
                 y2={200}
                 stroke="red"
                 strokeWidth="4"
               />
+            );
 
-              {/* DOWN TO UP */}
+          }
 
+          else if (
+            crossover.direction ===
+            "DOWN_TO_UP"
+          ) {
+
+            return (
               <line
-                x1={fromStation.x}
+                x1={midX - 30}
                 y1={200}
-                x2={toStation.x}
+                x2={midX + 30}
                 y2={100}
                 stroke="red"
                 strokeWidth="4"
               />
+            );
 
-            </g>
-          );
+          }
+
+          else if (crossover.direction === "SCISSOR") {
+            return (
+
+              <g>
+
+                <line
+                  x1={midX - 30}
+                  y1={100}
+                  x2={midX + 30}
+                  y2={200}
+                  stroke="cyan"
+                  strokeWidth="4"
+                />
+
+                <line
+                  x1={midX - 30}
+                  y1={200}
+                  x2={midX + 30}
+                  y2={100}
+                  stroke="cyan"
+                  strokeWidth="4"
+                />
+
+              </g>
+
+            );
+          }
         }
       )}
 

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState , useEffect } from "react";
 
 function LayoutCreator({ onGenerate }) {
   const [stationCount, setStationCount] = useState();
@@ -6,10 +6,22 @@ function LayoutCreator({ onGenerate }) {
 
   const [crossovers, setCrossovers] = useState([
     {
-      fromStation: 1,
-      toStation: 2,
+      trackNumber: 1,
+      direction: "UP_TO_DOWN"
     },
   ]);
+
+  useEffect(() => {
+
+    setCrossovers(prev =>
+      prev.filter(
+        crossover =>
+        crossover.trackNumber <
+        stationCount
+      )
+    );
+  
+  }, [stationCount]);
 
   const handleCrossoverCountChange = (count) => {
     setCrossoverCount(count);
@@ -18,8 +30,8 @@ function LayoutCreator({ onGenerate }) {
 
     for (let i = 0; i < count; i++) {
       arr.push({
-        fromStation: 1,
-        toStation: 2,
+        trackNumber: 1,
+        direction: "UP_TO_DOWN"
       });
     }
 
@@ -31,11 +43,16 @@ function LayoutCreator({ onGenerate }) {
     field,
     value
   ) => {
-    const updated = [...crossovers];
-
-    updated[index][field] = value;
-
-    setCrossovers(updated);
+    setCrossovers(prev =>
+      prev.map((item, i) =>
+        i === index
+          ? {
+              ...item,
+              [field]: value,
+            }
+          : item
+      )
+    );
   };
 
   const generateLayout = () => {
@@ -88,59 +105,76 @@ function LayoutCreator({ onGenerate }) {
 
       <br />
 
-      {crossovers.map((item, index) => (
-        <div key={index}>
-          <h4>
-            Crossover {index + 1}
-          </h4>
+      {crossoverCount ?
+        (crossovers.map((item, index) => (
+          <div key={index} style={{ display: "flex", flexDirection: "column" }}>
+            <h4>
+              Crossover {index + 1}
+            </h4>
 
-          <select
-            value={item.fromStation}
-            onChange={(e) =>
-              updateCrossover(
-                index,
-                "fromStation",
-                Number(e.target.value)
-              )
-            }
-          >
-            {Array.from({
-              length: stationCount,
-            }).map((_, i) => (
-              <option
-                key={i + 1}
-                value={i + 1}
-              >
-                ST-{String(i + 1).padStart(2, "0")}
-              </option>
-            ))}
-          </select>
-            
-            <h4>To</h4>
+            <label>
+              Between Track:
+            </label>
 
-          <select
-            value={item.toStation}
-            onChange={(e) =>
-              updateCrossover(
-                index,
-                "toStation",
-                Number(e.target.value)
-              )
-            }
-          >
-            {Array.from({
-              length: stationCount,
-            }).map((_, i) => (
-              <option
-                key={i + 1}
-                value={i + 1}
+            <div style={{ display: "flex", justifyContent: "center" }}>
+              <select
+                value={item.trackNumber}
+                onChange={(e) =>
+                  updateCrossover(
+                    index,
+                    "trackNumber",
+                    Number(e.target.value)
+                  )
+                }
               >
-                ST-{String(i + 1).padStart(2, "0")}
-              </option>
-            ))}
-          </select>
-        </div>
-      ))}
+                {Array.from({
+                  length: stationCount-1,
+                }).map((_, i) => (
+                  <option
+                    key={i + 1}
+                    value={i + 1}
+                  >
+                    ST-{String(i + 1).padStart(2, "0")}
+                    {" ↔ "}
+                    ST-{String(i + 2).padStart(2, "0")}
+                  </option>
+                ))}
+              </select>
+
+              <label>
+                Direction:
+              </label>
+
+              <select
+                value={item.direction}
+                onChange={(e) =>
+                  updateCrossover(
+                    index,
+                    "direction",
+                    e.target.value
+                  )
+                }
+              >
+                <option value="UP_TO_DOWN">
+                  UP → DOWN
+                </option>
+
+                <option value="DOWN_TO_UP">
+                  DOWN → UP
+                </option>
+
+                <option value="SCISSOR">
+                  SCISSOR
+                </option>
+              </select>
+              <p>{item.direction}</p>
+            </div>
+          </div>
+        )))
+        : <></>
+      }
+
+
 
       <br />
 
