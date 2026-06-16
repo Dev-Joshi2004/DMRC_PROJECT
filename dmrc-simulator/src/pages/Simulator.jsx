@@ -13,7 +13,7 @@ function Simulator() {
   const [crossovers, setCrossovers] =
     useState([]);
 
-  const trainPosition =
+  const train =
     useTrainSimulation(stations);
 
   const handleGenerate = (
@@ -29,7 +29,9 @@ function Simulator() {
 
   return (
     <div>
-      <ControlPanel />
+      <ControlPanel 
+        train={train}
+      />
 
       <LayoutCreator
         onGenerate={handleGenerate}
@@ -38,7 +40,7 @@ function Simulator() {
       <MetroMap
         stations={stations}
         crossovers={crossovers}
-        trainPosition={trainPosition}
+        train={train}
       />
     </div>
   );

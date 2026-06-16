@@ -1,22 +1,49 @@
 import React from "react";
 
-function ControlPanel() {
+function ControlPanel({
+  train
+}) {
 
-    return (
-  
-      <div className="panel">
-  
-        <h2>DMRC Simulator</h2>
-  
-        <p>Train ID : T101</p>
-  
-        <p>Status : Running</p>
-  
-        <p>Direction : UP</p>
-  
-      </div>
-  
-    );
-  }
-  
-  export default ControlPanel;
+  return (
+
+    <div
+      style={{
+        padding:"20px"
+      }}
+    >
+
+      <h2>
+        DMRC Simulator
+      </h2>
+
+      <p>
+        Speed :
+        {train?.speed}
+        km/h
+      </p>
+
+      <p>
+        State :
+        {train?.state}
+      </p>
+
+      <p>
+        Current Station :
+        {
+          train?.currentStation
+          || "-"
+        }
+      </p>
+
+      <p>
+        Line :
+        {train?.line}
+      </p>
+
+    </div>
+
+  );
+
+}
+
+export default ControlPanel;
