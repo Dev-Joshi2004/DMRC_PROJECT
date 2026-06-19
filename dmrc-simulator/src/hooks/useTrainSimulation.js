@@ -1,149 +1,72 @@
 import { useEffect, useState } from "react";
 
-export default function useTrainSimulation(stations) {
+export default function useTrainSimulation(
+  trackCircuits
+) {
 
-  const [train, setTrain] = useState({
-    position: 100,
-    speed: 60,
-    state: "RUNNING",
-    currentStation: null,
-    lastVisitedStation: null,
-    line: "UP"
-  });
+  const [train, setTrain] =
+    useState({
+      trainNo: "T001",
+      currentTC: null,
+      speed: 65,
+      direction: "UP"
+    });
 
   useEffect(() => {
 
-    if (!stations.length) return;
+    if (
+      !trackCircuits ||
+      trackCircuits.length === 0
+    )
+      return;
 
-    const firstX = stations[0].x;
-    const lastX =
-      stations[stations.length - 1].x;
+    setTrain(prev => ({
+      ...prev,
+      currentTC:
+        trackCircuits[0].tcName
+    }));
 
-    setTrain({
-      position: firstX,
-      speed: 60,
-      state: "RUNNING",
-      currentStation: null,
-      lastVisitedStation: null,
-      line: "UP"
-    });
+    const timer =
+      setInterval(() => {
 
-    let dwellTimeout;
+        setTrain(prev => {
 
-    const timer = setInterval(() => {
+          const currentIndex =
+            trackCircuits.findIndex(
+              tc =>
+                tc.tcName ===
+                prev.currentTC
+            );
 
-      setTrain(prev => {
+          let nextIndex =
+            currentIndex + 1;
 
-        if (prev.state === "DWELLING")
-          return prev;
-
-        const nextPosition =
-          prev.line === "UP"
-            ? prev.position + 1.5
-            : prev.position - 1.5;
-
-        const reachedStation =
-          stations.find(
-            station =>
-              Math.abs(
-                station.x -
-                nextPosition
-              ) < 2 &&
-              station.name !==
-              prev.lastVisitedStation
-          );
-
-        if (reachedStation) {
-
-          dwellTimeout =
-            setTimeout(() => {
-
-              setTrain(old => ({
-                ...old,
-                state: "RUNNING",
-                speed: 60
-              }));
-
-            }, 20000);
+          if (
+            nextIndex >=
+            trackCircuits.length
+          ) {
+            nextIndex = 0;
+          }
 
           return {
+
             ...prev,
-            position:
-              reachedStation.x,
-            state: "DWELLING",
-            speed: 0,
-            currentStation:
-              reachedStation.name,
-            lastVisitedStation:
-              reachedStation.name
-          };
-        }
 
-        /*
-        =====================
-        END CROSSOVER
-        UP -> DOWN
-        =====================
-        */
+            currentTC:
+              trackCircuits[
+                nextIndex
+              ].tcName
 
-        if (
-          prev.line === "UP" &&
-          nextPosition >= lastX
-        ) {
-
-          return {
-            ...prev,
-            position: lastX,
-            line: "DOWN",
-            currentStation: null,
-            lastVisitedStation: null
           };
 
-        }
+        });
 
-        /*
-        =====================
-        START CROSSOVER
-        DOWN -> UP
-        =====================
-        */
+      }, 3000);
 
-        if (
-          prev.line === "DOWN" &&
-          nextPosition <= firstX
-        ) {
-
-          return {
-            ...prev,
-            position: firstX,
-            line: "UP",
-            currentStation: null,
-            lastVisitedStation: null
-          };
-
-        }
-
-        return {
-          ...prev,
-          position: nextPosition
-        };
-
-      });
-
-    }, 50);
-
-    return () => {
-
+    return () =>
       clearInterval(timer);
 
-      if (dwellTimeout)
-        clearTimeout(
-          dwellTimeout
-        );
-
-    };
-
-  }, [stations]);
+  }, [trackCircuits]);
 
   return train;
 }
