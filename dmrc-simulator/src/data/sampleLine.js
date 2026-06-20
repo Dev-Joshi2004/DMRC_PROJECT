@@ -26,7 +26,8 @@ export const sampleLine = {
         id:3,
         name:"Dwarka Sector 9",
         x:900,
-        tcName:"TC106"
+        tcName:"TC106",
+        isTerminal: true
       }
     
     ],
@@ -36,6 +37,7 @@ export const sampleLine = {
         {
           id: 1,
           tcName: "TC101",
+          nextTC: null,
           startX: 100,
           endX: 350,
           //occupied: true,
@@ -45,6 +47,7 @@ export const sampleLine = {
         {
           id: 2,
           tcName: "TC102",
+          nextTC: "TC104",
           startX: 100,
           endX: 350,
           //occupied: false,
@@ -54,6 +57,7 @@ export const sampleLine = {
         {
           id: 3,
           tcName: "TC103",
+          nextTC: "TC101",
           startX: 350,
           endX: 700,
           //occupied: false,
@@ -63,6 +67,7 @@ export const sampleLine = {
         {
           id: 4,
           tcName: "TC104",
+          nextTC: "TC106",
           startX: 350,
           endX: 700,
           //occupied: false,
@@ -72,6 +77,7 @@ export const sampleLine = {
         {
           id: 5,
           tcName: "TC106",
+          nextTC: "TC105",
           startX: 700,
           endX: 950,
           //occupied: false,
@@ -81,6 +87,7 @@ export const sampleLine = {
         {
           id: 6,
           tcName: "TC105",
+          nextTC: "TC103",
           startX: 700,
           endX: 950,
           //occupied: false,
@@ -134,7 +141,7 @@ export const sampleLine = {
        
         toTC:"TC105",
        
-        position:"REVERSE",
+        position:"NORMAL",
 
         locked: false, 
        

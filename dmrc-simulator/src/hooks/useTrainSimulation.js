@@ -15,6 +15,8 @@ export default function useTrainSimulation(
       speed: 65,
       direction: "UP",
       dwell: false,
+      terminalDwell: false,
+      crossingOver: false,
       lastStation: null
     });
 
@@ -30,8 +32,7 @@ export default function useTrainSimulation(
 
       ...prev,
 
-      currentTC:
-        trackCircuits[0].tcName
+      currentTC: "TC102"
 
     }));
 
@@ -51,8 +52,32 @@ export default function useTrainSimulation(
         setTrain(prev => {
 
           // Train station pe ruki hui hai
-          if (prev.dwell) {
+          if (
+            prev.dwell ||
+            prev.terminalDwell || prev.crossingOver
+          ) {
+            console.log(
+              "TRAIN HOLD"
+            );
             return prev;
+          }
+
+          const currentTCData =
+            trackCircuits.find(
+              tc =>
+                tc.tcName ===
+                prev.currentTC
+            );
+
+          if (!currentTCData) {
+            return prev;
+          }
+          if (
+            currentTCData.nextTC === null
+          ) {
+          
+            return prev;
+          
           }
 
           const currentStation =
@@ -62,11 +87,54 @@ export default function useTrainSimulation(
                 prev.currentTC
             );
 
+          const isTerminalTC =
+            currentStation?.isTerminal === true;
+            if (
+              isTerminalTC &&
+              !prev.terminalDwell
+            ) {
+            
+              const point =
+                points?.[0];
+            
+              const result =
+                verifyPoint(point);
+            
+              addEvent?.(
+                result.message
+              );
+            
+              if (
+                !result.allowed
+              ) {
+            
+                addEvent?.(
+                  "Train Held At Terminal"
+                );
+            
+                return prev;
+            
+              }
+            
+              addEvent?.(
+                "Train Arrived Terminal"
+              );
+            
+              return {
+            
+                ...prev,
+            
+                terminalDwell:true
+            
+              };
+            
+            }
           // Arrival Event
           if (
             currentStation &&
+            !currentStation.isTerminal &&
             prev.lastStation !==
-              currentStation.name
+            currentStation.name
           ) {
 
             addEvent?.(
@@ -86,31 +154,16 @@ export default function useTrainSimulation(
 
           }
 
-          const currentIndex =
-            trackCircuits.findIndex(
-              tc =>
-                tc.tcName ===
-                prev.currentTC
-            );
-
-          let nextIndex =
-            currentIndex + 1;
-
-          if (
-            nextIndex >=
-            trackCircuits.length
-          ) {
-            nextIndex = 0;
-          }
+          console.log(
+            "MOVING TO:",
+            currentTCData.nextTC
+          );
 
           return {
 
             ...prev,
 
-            currentTC:
-              trackCircuits[
-                nextIndex
-              ].tcName
+            currentTC: currentTCData.nextTC
 
           };
 
@@ -125,6 +178,88 @@ export default function useTrainSimulation(
     trackCircuits,
     stations,
     addEvent
+  ]);
+
+  //Terminal dwell
+  useEffect(() => {
+
+    if (
+      !train.terminalDwell
+    ) return;
+
+    addEvent?.(
+      "Terminal Dwell Started"
+    );
+
+    const timer =
+      setTimeout(() => {
+
+        setTrain(prev => ({
+
+          ...prev,
+
+          terminalDwell: false,
+
+          crossingOver: true
+
+        }));
+
+        addEvent?.(
+          "Terminal Dwell Completed"
+        );
+
+        addEvent?.(
+          "Direction Changed"
+        );
+
+      }, 30000);
+
+    return () =>
+      clearTimeout(timer);
+
+  }, [
+    train.terminalDwell
+  ]);
+
+  //Crossover Movement
+
+  useEffect(() => {
+
+    if (!train.crossingOver)
+      return;
+
+    addEvent?.(
+      "Crossover Movement Started"
+    );
+
+    const timer =
+      setTimeout(() => {
+        console.log(
+          "CROSSOVER COMPLETE"
+        );
+        setTrain(prev => ({
+
+          ...prev,
+
+          crossingOver: false,
+
+          direction: "DOWN",
+
+          currentTC: "TC105"
+
+        }));
+
+        addEvent?.(
+          "Crossover Movement Completed"
+        );
+
+      }, 5000);
+
+    return () =>
+      clearTimeout(timer);
+
+  }, [
+    train.crossingOver
   ]);
 
   // Dwell Timer
@@ -152,46 +287,19 @@ export default function useTrainSimulation(
 
         setTrain(prev => {
 
-          const currentIndex =
-            trackCircuits.findIndex(
+          const currentTCData =
+            trackCircuits.find(
               tc =>
                 tc.tcName ===
                 prev.currentTC
             );
 
-          let nextIndex =
-            currentIndex + 1;
+          if (!currentTCData) {
+            return prev;
+          }
 
-            if (
-              nextIndex >=
-              trackCircuits.length
-            ) {
-            
-              const point =
-                points?.[0];
-            
-              const result =
-                verifyPoint(point);
-            
-              addEvent?.(
-                result.message
-              );
-            
-              if (
-                !result.allowed
-              ) {
-            
-                addEvent?.(
-                  "Train Held At Terminal"
-                );
-            
-                return prev;
-            
-              }
-            
-              nextIndex = 0;
-            
-            }
+          const nextTC =
+            currentTCData.nextTC;
 
           return {
 
@@ -199,10 +307,7 @@ export default function useTrainSimulation(
 
             dwell: false,
 
-            currentTC:
-              trackCircuits[
-                nextIndex
-              ].tcName
+            currentTC: nextTC
 
           };
 

@@ -22,7 +22,7 @@ function Simulator() {
   const upTrackCircuits = useMemo(() => lineData.trackCircuits.filter(tc => tc.direction === "UP"),[lineData.trackCircuits]);
 
   const train = useTrainSimulation(
-    upTrackCircuits,
+    lineData.trackCircuits,
     lineData.stations,
     lineData.points,
     (message) => {
