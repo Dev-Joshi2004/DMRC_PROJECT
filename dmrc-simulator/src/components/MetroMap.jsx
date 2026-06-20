@@ -23,6 +23,12 @@ function MetroMap({
 
   const gapBetweenTwoTCs = 6;
 
+  const currentTC = trackCircuits.find(tc => tc.tcName === train.currentTC );
+
+  const trainX = currentTC ? (currentTC.startX + currentTC.endX) / 2 : 100;
+
+  const trainY = train.direction === "UP" ? 100 : 200;
+
   return (
     <svg width="1600" height="350">
       
@@ -39,7 +45,7 @@ function MetroMap({
             y1={100}
             x2={tc.endX - gapBetweenTwoTCs/2}
             y2={100}
-            stroke={ train?.currentTC === tc.tcName ? "red" : "#00ff66" }
+            stroke={ train?.currentTC === tc.tcName && train?.direction === "UP" ? "red" : "#00ff66" }
             strokeWidth="4"
           />
 
@@ -111,7 +117,7 @@ function MetroMap({
             y1={200}
             x2={tc.endX - gapBetweenTwoTCs/2}
             y2={200}
-            stroke={ train?.currentTC === tc.tcName ? "red" : "#00ff66" }
+            stroke={ train?.currentTC === tc.tcName && train?.direction === "DOWN" ? "red" : "#00ff66" }
             strokeWidth="4"
           />
 
@@ -144,7 +150,8 @@ function MetroMap({
             calculateSignalAspect(
               signal,
               trackCircuits,
-              routes
+              routes,
+              train
             )
           }
         />
@@ -253,7 +260,9 @@ function MetroMap({
           key={point.id}
           x={point.x}
           y={point.y}
+          pointNo={point.pointNo}
           position={point.position}
+          locked={point.locked}
         />
 
       ))}
@@ -349,17 +358,15 @@ function MetroMap({
         strokeWidth="4"
       />
 
-      <Train
-        x={train.x ?? train.position}
-        y={
-          train.y ??
-          (
-            train.line === "UP"
-              ? 100
-              : 200
-          )
-        }
-      />
+      <Train x={trainX} y={trainY} />
+
+      <text
+        x="50"
+        y="50"
+        fill="white"
+      >
+        {train.currentTC}
+      </text>
     </svg>
   );
 }

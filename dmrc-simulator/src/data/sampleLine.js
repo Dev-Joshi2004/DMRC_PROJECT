@@ -7,21 +7,28 @@ export const sampleLine = {
     color: "#0099ff",
   
     stations: [
-        {
-            id:1,
-            name:"Dwarka Sector 21",
-            x:100
-        },
-        {
-            id:2,
-            name:"Dwarka Sector 8",
-            x:300
-        },
-        {
-            id : 3,
-            name : "Dwarka Sector 9",
-            x: 500
-        }
+
+      {
+        id:1,
+        name:"Dwarka Sector 21",
+        x:100,
+        tcName:"TC102"
+      },
+    
+      {
+        id:2,
+        name:"Dwarka Sector 8",
+        x:500,
+        tcName:"TC104"
+      },
+    
+      {
+        id:3,
+        name:"Dwarka Sector 9",
+        x:900,
+        tcName:"TC106"
+      }
+    
     ],
   
     trackCircuits: [
@@ -31,7 +38,7 @@ export const sampleLine = {
           tcName: "TC101",
           startX: 100,
           endX: 350,
-          occupied: true,
+          //occupied: true,
           direction: "DOWN"
         },
       
@@ -40,7 +47,7 @@ export const sampleLine = {
           tcName: "TC102",
           startX: 100,
           endX: 350,
-          occupied: false,
+          //occupied: false,
           direction: "UP"
         },
       
@@ -49,7 +56,7 @@ export const sampleLine = {
           tcName: "TC103",
           startX: 350,
           endX: 700,
-          occupied: false,
+          //occupied: false,
           direction: "DOWN"
         },
       
@@ -58,8 +65,26 @@ export const sampleLine = {
           tcName: "TC104",
           startX: 350,
           endX: 700,
-          occupied: false,
+          //occupied: false,
           direction: "UP"
+        },
+
+        {
+          id: 5,
+          tcName: "TC106",
+          startX: 700,
+          endX: 950,
+          //occupied: false,
+          direction: "UP"
+        },
+
+        {
+          id: 6,
+          tcName: "TC105",
+          startX: 700,
+          endX: 950,
+          //occupied: false,
+          direction: "DOWN"
         }
       
     ],
@@ -71,7 +96,7 @@ export const sampleLine = {
        
           signalNo:"S101",
        
-          protectedTC:"TC101",
+          protectedTC:"TC106",
        
           x:100,
        
@@ -105,15 +130,17 @@ export const sampleLine = {
        
         pointNo:"P101",
        
-        fromTC:"TC102",
+        fromTC:"TC106",
        
-        toTC:"TC202",
+        toTC:"TC105",
        
-        position:"NORMAL",
+        position:"REVERSE",
+
+        locked: false, 
        
-        x:530,
+        x:700,
        
-        y:80
+        y:150
       }
        
     ],
@@ -134,7 +161,7 @@ export const sampleLine = {
             "TC102",
             "TC103"
           ],
-       
+      
           active:true
         }
        

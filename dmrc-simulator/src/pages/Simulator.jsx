@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useMemo } from "react";
 
 import MetroMap from "../components/MetroMap";
 import ControlPanel from "../panels/ControlPanel";
@@ -18,7 +19,27 @@ function Simulator() {
 
   //const train = useTrainSimulation(lineData.stations);
 
-  const train = useTrainSimulation(lineData.trackCircuits);
+  const upTrackCircuits = useMemo(() => lineData.trackCircuits.filter(tc => tc.direction === "UP"),[lineData.trackCircuits]);
+
+  const train = useTrainSimulation(
+    upTrackCircuits,
+    lineData.stations,
+    lineData.points,
+    (message) => {
+  
+      const currentTime =
+        new Date().toLocaleTimeString();
+  
+      setEventLogs(prev => [
+  
+        `${currentTime} ${message}`,
+  
+        ...prev
+  
+      ]);
+  
+    }
+  );
 
   const handleGenerate = ( generatedStations, generatedCrossovers) => {
 
@@ -59,7 +80,6 @@ function Simulator() {
   }
 
 };
-
 
   return (
     <div>
