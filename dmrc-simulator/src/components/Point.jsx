@@ -6,13 +6,6 @@ function Point({
   locked
 }) {
 
-  const color =
-    locked
-      ? "red"
-      : position === "NORMAL"
-      ? "#00ff66"
-      : "yellow";
-
   return (
     <g>
 
@@ -20,7 +13,13 @@ function Point({
         cx={x}
         cy={y}
         r="8"
-        fill={color}
+        fill={
+          locked
+            ? "red"
+            : position === "NORMAL"
+              ? "green"
+              : "orange"
+        }
       />
 
       <text
@@ -30,14 +29,24 @@ function Point({
         fontSize="10"
         textAnchor="middle"
       >
-        {pointNo}
+        {locked ? "LOCK" : ""}
       </text>
 
       <text
         x={x}
         y={y + 20}
-        fill={color}
+        fill="white"
         fontSize="10"
+        textAnchor="middle"
+      >
+        {pointNo}
+      </text>
+
+      <text
+        x={x}
+        y={y + 35}
+        fill="white"
+        fontSize="8"
         textAnchor="middle"
       >
         {position}

@@ -41,6 +41,7 @@ export const sampleLine = {
           startX: 100,
           endX: 350,
           //occupied: true,
+          locked:false,
           direction: "DOWN"
         },
       
@@ -51,6 +52,7 @@ export const sampleLine = {
           startX: 100,
           endX: 350,
           //occupied: false,
+          locked:false,
           direction: "UP"
         },
       
@@ -61,6 +63,7 @@ export const sampleLine = {
           startX: 350,
           endX: 700,
           //occupied: false,
+          locked:false,
           direction: "DOWN"
         },
       
@@ -71,6 +74,7 @@ export const sampleLine = {
           startX: 350,
           endX: 700,
           //occupied: false,
+          locked:false,
           direction: "UP"
         },
 
@@ -81,6 +85,7 @@ export const sampleLine = {
           startX: 700,
           endX: 950,
           //occupied: false,
+          locked:false,
           direction: "UP"
         },
 
@@ -91,6 +96,7 @@ export const sampleLine = {
           startX: 700,
           endX: 950,
           //occupied: false,
+          locked:false,
           direction: "DOWN"
         }
       
@@ -103,7 +109,7 @@ export const sampleLine = {
        
           signalNo:"S101",
        
-          protectedTC:"TC106",
+          protectedTC:"TC104",
        
           x:100,
        
@@ -128,7 +134,34 @@ export const sampleLine = {
        
     ],
 
-    crossovers: [],
+    crossovers: [
+      {
+        id:1,
+    
+        fromTC:"TC106",
+    
+        toTC:"TC105",
+    
+        startX:930,
+        startY:100,
+
+        endX:990,
+        endY:200
+      },
+      {
+        id:2,
+    
+        fromTC:"TC101",
+    
+        toTC:"TC102",
+    
+        startX:70,
+        startY:200,
+      
+        endX:10,
+        endY:100
+      }
+    ],
   
     points:[
 
@@ -164,12 +197,12 @@ export const sampleLine = {
           toSignal:"S102",
        
           tcIds:[
-            "TC101",
             "TC102",
-            "TC103"
+            "TC104",
+            "TC106"
           ],
       
-          active:true
+          active:false
         }
        
     ],

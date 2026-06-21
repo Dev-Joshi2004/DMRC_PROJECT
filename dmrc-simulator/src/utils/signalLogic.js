@@ -16,6 +16,18 @@ export const calculateSignalAspect = (
   }
 
   if (
+    train.crossingOver && train.crossoverFrom === "TC106" && signal.signalNo === "S101"
+  ) {
+    return "RED";
+  }
+
+  if (
+    train.crossingOver && train.crossoverFrom === "TC101" && signal.signalNo === "S102"
+  ) {
+    return "RED";
+  }
+
+  if (
     train.currentTC ===
     signal.protectedTC
   ) {

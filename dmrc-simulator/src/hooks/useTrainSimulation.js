@@ -5,6 +5,7 @@ export default function useTrainSimulation(
   trackCircuits,
   stations,
   points,
+  crossover,
   addEvent
 ) {
 
@@ -17,6 +18,8 @@ export default function useTrainSimulation(
       dwell: false,
       terminalDwell: false,
       crossingOver: false,
+      crossingProgress:0,
+      crossoverFrom: null,
       lastStation: null
     });
 
@@ -28,13 +31,17 @@ export default function useTrainSimulation(
       trackCircuits.length === 0
     ) return;
 
-    setTrain(prev => ({
+    setTrain(prev => {
 
-      ...prev,
+      if (prev.currentTC) return prev;
+
+      return {
+        ...prev,
 
       currentTC: "TC102"
+      }
 
-    }));
+    });
 
   }, [trackCircuits]);
 
@@ -62,6 +69,8 @@ export default function useTrainSimulation(
             return prev;
           }
 
+          
+
           const currentTCData =
             trackCircuits.find(
               tc =>
@@ -69,26 +78,36 @@ export default function useTrainSimulation(
                 prev.currentTC
             );
 
-          if (!currentTCData) {
-            return prev;
-          }
-          if (
-            currentTCData.nextTC === null
-          ) {
-          
-            return prev;
-          
-          }
-
-          const currentStation =
-            stations.find(
-              station =>
-                station.tcName ===
-                prev.currentTC
+            console.log(
+              "CURRENT:",
+              prev.currentTC
+            );
+            
+            console.log(
+              "NEXT:",
+              currentTCData?.nextTC
             );
 
-          const isTerminalTC =
-            currentStation?.isTerminal === true;
+            if (!currentTCData) {
+              return prev;
+            }
+            
+            const currentStation =
+              stations.find(
+                station =>
+                  station.tcName ===
+                  prev.currentTC
+              );
+            
+            const isUpTerminal =
+              currentStation?.isTerminal === true;
+            
+            const isDownTerminal =
+              prev.currentTC === "TC101";
+            
+            const isTerminalTC =
+              isUpTerminal ||
+              isDownTerminal;
             if (
               isTerminalTC &&
               !prev.terminalDwell
@@ -117,7 +136,9 @@ export default function useTrainSimulation(
               }
             
               addEvent?.(
-                "Train Arrived Terminal"
+                isDownTerminal
+                  ? "Train Arrived Down Terminal"
+                  : "Train Arrived Up Terminal"
               );
             
               return {
@@ -194,15 +215,34 @@ export default function useTrainSimulation(
     const timer =
       setTimeout(() => {
 
-        setTrain(prev => ({
+        points[0].locked = true;
 
-          ...prev,
+        addEvent?.(`${points[0].pointNo} Locked`);
 
-          terminalDwell: false,
+        addEvent?.(
+          "S101 Changed RED"
+        );
 
-          crossingOver: true
+        setTrain(prev => {
 
-        }));
+          console.log(
+            "SETTING CROSSOVER FROM:",
+            prev.currentTC
+          );
+        
+          return {
+        
+            ...prev,
+        
+            terminalDwell: false,
+        
+            crossingOver: true,
+        
+            crossoverFrom: prev.currentTC
+        
+          };
+        
+        });
 
         addEvent?.(
           "Terminal Dwell Completed"
@@ -223,29 +263,51 @@ export default function useTrainSimulation(
 
   //Crossover Movement
 
+  console.log(
+    "CROSSOVER FROM:",
+    train.crossoverFrom
+  );
+
   useEffect(() => {
 
-    if (!train.crossingOver)
-      return;
+    if (!train.crossingOver) return;
 
     addEvent?.(
       "Crossover Movement Started"
     );
 
+    let progress = 0;
+
     const timer =
-      setTimeout(() => {
-        console.log(
-          "CROSSOVER COMPLETE"
-        );
+      setInterval(() => {
+        progress += 10;
+
+        setTrain(prev => ({
+
+          ...prev,
+  
+          crossingProgress:
+            progress
+  
+        }));
+
+        if(progress >= 100) {
+          points[0].locked = false;
+
+          addEvent?.(`${points[0].pointNo} Unlocked`);
+          clearInterval(timer);
+        
         setTrain(prev => ({
 
           ...prev,
 
           crossingOver: false,
 
-          direction: "DOWN",
+          crossingProgress:0,
 
-          currentTC: "TC105"
+          direction: prev.direction === "UP" ? "DOWN" : "UP",
+
+          currentTC: prev.crossoverFrom === "TC106" ? "TC105" : "TC102",
 
         }));
 
@@ -253,10 +315,16 @@ export default function useTrainSimulation(
           "Crossover Movement Completed"
         );
 
-      }, 5000);
+        addEvent?.(
+          "S101 Changed GREEN"
+        );
+
+      }
+
+      }, 500);
 
     return () =>
-      clearTimeout(timer);
+      clearInterval(timer);
 
   }, [
     train.crossingOver
@@ -307,7 +375,9 @@ export default function useTrainSimulation(
 
             dwell: false,
 
-            currentTC: nextTC
+            currentTC: nextTC,
+
+            lastStation: null
 
           };
 

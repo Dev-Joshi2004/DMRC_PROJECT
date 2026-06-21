@@ -23,15 +23,71 @@ function MetroMap({
 
   const gapBetweenTwoTCs = 6;
 
-  const currentTC = trackCircuits.find(tc => tc.tcName === train.currentTC );
+  const currentTC = trackCircuits.find(tc => tc.tcName === train.currentTC);
 
   const trainX = currentTC ? (currentTC.startX + currentTC.endX) / 2 : 100;
 
   const trainY = train.direction === "UP" ? 100 : 200;
 
+  let displayX = trainX;
+
+  let displayY = trainY;
+
+  if (train.crossingOver) {
+
+    const crossover =
+      crossovers.find(
+        c =>
+          c.fromTC ===
+          train.crossoverFrom
+      );
+
+    if (crossover) {
+
+      displayX =
+        crossover.startX +
+        (
+          (
+            crossover.endX -
+            crossover.startX
+          )
+          *
+          train.crossingProgress
+        ) / 100;
+
+      displayY =
+        crossover.startY +
+        (
+          (
+            crossover.endY -
+            crossover.startY
+          )
+          *
+          train.crossingProgress
+        ) / 100;
+
+    }
+
+  }
+
+  console.log(
+    "CROSSING:",
+    train.crossingOver
+    );
+
+    console.log(
+    "FROM:",
+    train.crossoverFrom
+    );
+
+    console.log(
+    "PROGRESS:",
+    train.crossingProgress
+    );
+
   return (
     <svg width="1600" height="350">
-      
+
       {console.log(train)};
 
       {/* UP TRACK CIRCUITS */}
@@ -41,11 +97,11 @@ function MetroMap({
         <g key={tc.id}>
 
           <line
-            x1={tc.startX + gapBetweenTwoTCs/2}
+            x1={tc.startX + gapBetweenTwoTCs / 2}
             y1={100}
-            x2={tc.endX - gapBetweenTwoTCs/2}
+            x2={tc.endX - gapBetweenTwoTCs / 2}
             y2={100}
-            stroke={ train?.currentTC === tc.tcName && train?.direction === "UP" ? "red" : "#00ff66" }
+            stroke={ train?.currentTC === tc.tcName && train?.direction === "UP" ? "red" : tc.locked ? "yellow" : "#00ff66"}
             strokeWidth="4"
           />
 
@@ -113,11 +169,11 @@ function MetroMap({
         <g key={`dn-${tc.id}`}>
 
           <line
-            x1={tc.startX + gapBetweenTwoTCs/2}
+            x1={tc.startX + gapBetweenTwoTCs / 2}
             y1={200}
-            x2={tc.endX - gapBetweenTwoTCs/2}
+            x2={tc.endX - gapBetweenTwoTCs / 2}
             y2={200}
-            stroke={ train?.currentTC === tc.tcName && train?.direction === "DOWN" ? "red" : "#00ff66" }
+            stroke={ train?.currentTC === tc.tcName && train?.direction === "DOWN" ? "red" : tc.locked ? "yellow" : "#00ff66"}
             strokeWidth="4"
           />
 
@@ -160,7 +216,7 @@ function MetroMap({
 
       {/* CROSSOVERS */}
 
-      {crossovers?.map(
+      {/* {crossovers?.map(
         (crossover, index) => {
 
           const trackIndex =
@@ -250,7 +306,21 @@ function MetroMap({
             );
           }
         }
-      )}
+      )} */}
+
+      {crossovers.map(crossover => (
+
+        <line
+          key={crossover.id}
+          x1={crossover.startX}
+          y1={crossover.startY}
+          x2={crossover.endX}
+          y2={crossover.endY}
+          stroke="yellow"
+          strokeWidth="6"
+        />
+
+      ))}
 
       {/* POINTS */}
 
@@ -358,7 +428,7 @@ function MetroMap({
         strokeWidth="4"
       />
 
-      <Train x={trainX} y={trainY} />
+      <Train x={displayX} y={displayY} />
 
       <text
         x="50"

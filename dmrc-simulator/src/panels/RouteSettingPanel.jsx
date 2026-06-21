@@ -1,6 +1,7 @@
 function RouteSettingPanel({
-    routes,
-    onRouteSelect
+  routes,
+  onRouteSelect,
+  selectedRouteId
   }) {
   
     return (
@@ -12,11 +13,17 @@ function RouteSettingPanel({
         </h3>
   
         <select
-          onChange={(e) =>
+          value={selectedRouteId || ""}
+          onChange={(e) => {
+
+            if (!e.target.value)
+              return;
+          
             onRouteSelect(
               Number(e.target.value)
-            )
-          }
+            );
+          
+          }}
         >
   
           <option value="">
