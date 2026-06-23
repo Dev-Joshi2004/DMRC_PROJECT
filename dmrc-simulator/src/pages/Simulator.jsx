@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useMemo } from "react";
 import { useEffect } from "react";
+import { fetchSimulationData } from "../services/simulationApi";
 
 import MetroMap from "../components/MetroMap";
 import ControlPanel from "../panels/ControlPanel";
@@ -19,6 +20,8 @@ function Simulator() {
   const [eventLogs, setEventLogs] = useState([]);
 
   const [routeReleased, setRouteReleased] = useState(false);
+
+  const [backendData,setBackendData] = useState(null);
 
   //const train = useTrainSimulation(lineData.stations);
 
@@ -44,6 +47,44 @@ function Simulator() {
   
     }
   );
+
+  useEffect(() => {
+
+    const loadData =
+      async () => {
+  
+        try {
+  
+          const data =
+            await fetchSimulationData();
+  
+          setBackendData(data);
+  
+          console.log(
+            "BACKEND DATA:",
+            data
+          );
+  
+        } catch (error) {
+  
+          console.error(error);
+  
+        }
+  
+      };
+  
+    loadData();
+  
+    const timer =
+      setInterval(
+        loadData,
+        1000
+      );
+  
+    return () =>
+      clearInterval(timer);
+  
+  }, []);
 
   useEffect(() => {
 

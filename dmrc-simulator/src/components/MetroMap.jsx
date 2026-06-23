@@ -437,7 +437,78 @@ function MetroMap({
       >
         {train.currentTC}
       </text>
+
+      {backendData && (
+
+<div
+  style={{
+    color:"white",
+    padding:"10px"
+  }}
+>
+
+  <h3>
+    Backend Telemetry
+  </h3>
+
+  <p>
+    TC:
+    {backendData.train.current_tc}
+  </p>
+
+  <p>
+    Direction:
+    {backendData.train.direction}
+  </p>
+
+  <p>
+    Speed:
+    {
+      backendData.train.s
+    }
+    km/h
+  </p>
+
+  <p>
+    Mode:
+    {
+      backendData.train.mode
+    }
+  </p>
+
+  <p>
+    Chainage:
+    {
+      backendData.train.chainage
+    }
+  </p>
+
+</div>
+
+)}
+
+{backendData?.event_logs?.map(
+  (log,index) => (
+
+    <div key={index}>
+
+      {log.timestamp}
+      {" "}
+      {log.message}
+
+    </div>
+
+))}
+
+console.log(
+  backendData.track_circuits
+);
+
+console.log(
+  backendData.signals
+);
     </svg>
+
   );
 }
 

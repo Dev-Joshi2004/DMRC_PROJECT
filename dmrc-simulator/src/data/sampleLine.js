@@ -25,8 +25,16 @@ export const sampleLine = {
       {
         id:3,
         name:"Dwarka Sector 9",
-        x:900,
+        x:800,
         tcName:"TC106",
+        // isTerminal: true
+      },
+
+      {
+        id:4,
+        name:"Dwarka Sector 10",
+        x:1100,
+        tcName:"TC108",
         isTerminal: true
       }
     
@@ -55,18 +63,7 @@ export const sampleLine = {
           locked:false,
           direction: "UP"
         },
-      
-        {
-          id: 3,
-          tcName: "TC103",
-          nextTC: "TC101",
-          startX: 350,
-          endX: 700,
-          //occupied: false,
-          locked:false,
-          direction: "DOWN"
-        },
-      
+
         {
           id: 4,
           tcName: "TC104",
@@ -81,12 +78,33 @@ export const sampleLine = {
         {
           id: 5,
           tcName: "TC106",
-          nextTC: "TC105",
+          nextTC: "TC108",
           startX: 700,
           endX: 950,
           //occupied: false,
           locked:false,
           direction: "UP"
+        },
+
+        {
+          id:7,
+          tcName: "TC108",
+          nextTC: "TC107",
+          startX: 950,
+          endX:1200,
+          locked: false,
+          direction: "UP"
+        },
+      
+        {
+          id: 3,
+          tcName: "TC103",
+          nextTC: "TC101",
+          startX: 350,
+          endX: 700,
+          //occupied: false,
+          locked:false,
+          direction: "DOWN"
         },
 
         {
@@ -98,7 +116,18 @@ export const sampleLine = {
           //occupied: false,
           locked:false,
           direction: "DOWN"
+        },
+
+        {
+          id:8,
+          tcName: "TC107",
+          nextTC: "TC105",
+          startX: 950,
+          endX: 1200,
+          locked: false,
+          direction: "DOWN"
         }
+
       
     ],
   
@@ -109,7 +138,7 @@ export const sampleLine = {
        
           signalNo:"S101",
        
-          protectedTC:"TC104",
+          protectedTC:null,
        
           x:100,
        
@@ -138,14 +167,14 @@ export const sampleLine = {
       {
         id:1,
     
-        fromTC:"TC106",
+        fromTC:"TC108",
     
-        toTC:"TC105",
+        toTC:"TC107",
     
-        startX:930,
+        startX:1130,
         startY:100,
 
-        endX:990,
+        endX:1190,
         endY:200
       },
       {

@@ -99,8 +99,12 @@ export default function useTrainSimulation(
                   prev.currentTC
               );
             
+              const terminalStation =
+              stations[stations.length - 1];
+            
             const isUpTerminal =
-              currentStation?.isTerminal === true;
+              currentStation?.id ===
+              terminalStation?.id;
             
             const isDownTerminal =
               prev.currentTC === "TC101";
@@ -307,7 +311,7 @@ export default function useTrainSimulation(
 
           direction: prev.direction === "UP" ? "DOWN" : "UP",
 
-          currentTC: prev.crossoverFrom === "TC106" ? "TC105" : "TC102",
+          currentTC: prev.crossoverFrom === "TC108" ? "TC107" : "TC102",
 
         }));
 
